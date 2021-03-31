@@ -4,7 +4,7 @@ import React from 'react'
 export default class Todo extends React.Component {
 clickme2(){
     console.log("onclick ",  this.props.onClick)
-        this.props.onClick(this.props.id)
+        this.props.onClick(this.props.id ,this.props.index)
 
 }
 Clicked(event){

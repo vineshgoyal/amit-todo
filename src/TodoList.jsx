@@ -35,7 +35,7 @@ export default class TodoList extends React.Component {
     })
     console.log(this.state.Users)
   }
-  ClickMe(value){
+  ClickMe(value,i){
     console.log('ok',value.id)
 
    
@@ -43,7 +43,7 @@ export default class TodoList extends React.Component {
     
     HttpsReq.delete("todos/" + value).then((res) => {
          console.log(res.data);
-        temp.splice(value.id,1)
+        temp.splice(i,1)
          this.setState({
            Users:temp
          })
