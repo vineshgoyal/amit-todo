@@ -1,0 +1,28 @@
+.class2{
+
+    background-color: aliceblue;
+    width: 590px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 80px;
+    border-radius: 7px;
+    text-align: left;
+    height: 500px;
+}
+body {
+    background-color:skyblue !important
+}
+
+.checked-item{
+    text-decoration: line-through;
+    color: #aaa;
+}
+.btnclass{
+    float: right;
+    background-color: violet;
+    margin: 20px;
+}
+.class3{
+    margin: 10px;
+}
