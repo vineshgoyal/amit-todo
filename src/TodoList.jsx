@@ -4,144 +4,107 @@ import Todo from './Todo'
 import './todo.css'
 import {HttpsReq} from './HttpRequest/HttpsReq'
 
-export default class TodoList extends React.Component {
-
-  state = {
-    Users: [],
-   
-    temptitle: "",
-  }
-
-
-  componentDidMount() {
-    HttpsReq.get("/todos").then((res) => {
-      
-      this.setState(
-        {
-          Users:res.data
-        })
-    })
-
-  }
-  getList() {
-    return this.state.Users.map((values, i) => {
-      return <Todo todo={values} complete={values.complete} index={i} key={this.props.id} complete={values.complete} id={values.id} title={values.title} onClick={this.ClickMe.bind(this)} onClick2={this.ClickMe2} />
-    })
-  }
-  CaptureValue(event) {
-    console.log(event.target.value);
-    this.setState({
-      temptitle:event.target.value
-    })
-    console.log(this.state.Users)
-  }
-  ClickMe(value){
-    console.log('ok',value)
-    HttpsReq.delete("todos/" + value).then((res) => {
-      console.log(res.data);   
-})
-    let index =null;
-    let temp =[...this.state.Users]
-  for(let i=0;i<this.state.Users.length;i++){
-    if(this.state.Users[i].id==value){
-     index =i;
-     console.log(index)
-     temp.splice(index,1)
-     this.setState({
-      Users:temp
-    })
-    break
-    }
-      
+function Todolist(){
+  const [todoList, setTodoList] = React.useState([]);
+  const [todo, setTodo] = React.useState("");
  
+  function changeTodo(event){
+    setTodo(event.target.value)
+
+
   }
-    
-  /*temp.splice(index,1)
-  this.setState({
-    Users:temp
-  })*/
-    
-  }
-  ClickMe2=(todo ,event)=>{
-    console.log(event.target.checked)
-   let checked=event.target.checked
-   HttpsReq.patch("todos/" + todo.id , {complete : checked}).then((res)=>{
-     console.log(todo.id)
-    let todoList=[...this.state.Users];
-    let index =null;
-    for(let i=0;i<this.state.Users.length;i++){
-     if(this.state.Users[i].id==todo.id){
-      index =i;
-      console.log(index)
-      this.state.Users[index].complete=checked
-      this.setState(this.state)
+  function onAdd(){
+    let singleTodo = {
+        title: todo,
+        complete: false
     }
     
-   }
-   })
-  }
-  updatebtn() {
-
-    let newtodo = {
-      title: this.state.temptitle,
-      complete:false
-    }
-    let user =this.state.Users
-
-    if (this.state.temptitle !== "") {
-      
-      HttpsReq.post("/todos", newtodo).then((res) => {
-        console.log(res.data)
-        user.push(res.data)
-        this.setState({
-          users:user,
-          temptitle :""
-        })
-        
-      })
-
-    }
-
-  }
-
-  Userdetails() {
-
-    return <div>
-    <h1>
-      <input type="text" placeholder="Add your new todo" value={this.state.temptitle} onChange={this.CaptureValue.bind(this)} />
-      <img src="./images/4.png" style={{float:"right" , width:"60px"}} onClick={this.updatebtn.bind(this)} />
-      </h1>
-      </div>
-
-  }
-  render() {
-
-       let button;
-       if(this.state.temptitle!=undefined){
-         button =<button className="btnclass">Clear All</button>
-       }
-    console.log(this.state)
-    let count;
-    if (this.state.Users.length > 0) {
-      count = <p>You have {this.state.Users.length} pending value</p>
-    }
-    return <div className=" class2">
-      <div className="class3">
-      <h1>TODO APP</h1>
-
-      {this.Userdetails()}
-      {count}
-      <div class="list">
-
-        {this.getList()}
-        
-      </div>
-      <div >{button}</div>
-      </div>
-    </div>
-
-
-
-
-  }
+    HttpsReq.post("todos", singleTodo).then((res)=>{
+        todoList.push(res.data);
+        setTodoList([...todoList]);
+        setTodo("");
+    })
+    
 }
+    console.log(todo)
+    React.useEffect( function(){
+      HttpsReq.get("todos").then((res)=>{
+                  setTodoList([...res.data])
+              })
+  }, [])
+  let deleteTodo=(value)=>{
+    
+      HttpsReq.delete("todos/" + value).then((res)=>{
+        let index =null;
+    let temp =[...todoList]
+  for(let i=0;i<todoList.length;i++){
+    if(todoList[i].id==value){
+     index =i;  break;      //to get the index value we use for loop
+    }
+   
+  }
+  temp.splice(index,1)
+  setTodoList([...temp])
+              })
+  
+
+  }
+  let checkBoxUpdate=(todo,event)=>{
+    console.log(todo)
+    let checked =event;
+    
+    HttpsReq.patch('todos/' + todo.id ,{complete:checked}).then((res)=>{
+      let temp=[...todoList]
+      let index=null;
+     for(let i=0;i<todoList.length;i++){
+       if(todoList[i].id==todo.id){
+         index=i; break
+       }
+      
+     }
+     console.log(index)
+     temp[index].complete=checked;
+     setTodoList(temp)
+
+    })
+
+  }
+  let ClearALLbtn=(todolist )=>{
+    console.log(todolist)
+    let index =null;
+    let temp =[...todo]
+    for(let i=0;i<todoList.length;i++){
+      console.log(index)
+      
+      HttpsReq.delete("/todos/"+ todoList[i].id )
+      
+      
+      }
+      setTodoList([])
+      
+   
+
+  }
+        let get= todoList.map((values, i) => {
+          return <Todo todo={values} complete={values.complete} index={i}  complete={values.complete} id={values.id} title={values.title} onClick={ deleteTodo} onClick2={checkBoxUpdate}/>
+        })
+        let button="";
+        if(todoList.length>0){
+          button =<button className="btnclass" onClick={ClearALLbtn}>Clear All</button>
+        }
+  return <div>
+  <h1>
+    
+    <input type="text" placeholder="Add your new todo" value={todo}  onChange={changeTodo}  />
+    <img src="./images/4.png" style={{float:"right" , width:"60px"}} onClick={onAdd} />
+    </h1>
+    {get}
+    {button}
+    </div>
+                               
+                              
+}
+
+export default Todolist;
+
+  

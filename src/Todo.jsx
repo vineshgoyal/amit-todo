@@ -1,30 +1,30 @@
 import React from 'react'
 
+function  Todo (props) {
 
-export default class Todo extends React.Component {
-clickme2(){
-    console.log("onclick ",  this.props.onClick)
-    
-        this.props.onClick(this.props.id )
-        
-
-}
-Clicked(event){
-    console.log("Val", this.props.todo)
-    this.props.onClick2(this.props.todo , event)
-}
-
-    render(){
-        let checkedClass="";
-        if(this.props.complete){
-            checkedClass="checked-item"
+        let daleteTodo1=()=>{
+            props.onClick(props.id)
+            console.log(props)
         }
-       
+        let checkboxF1=(event)=>{
+            props.onClick2(props.todo ,event.target.checked)
+
+        }
+        
+        console.log(props)
+        let decorationClass="";
+        if(props.complete==true) {
+            decorationClass="workdone"
+
+        }
+        
         return  <div>
-        <h1 className="list-group-item list-group-item-action list-group-item-info " ><span className={checkedClass}><input type="checkbox" checked={this.props.complete} onChange={this.Clicked.bind(this)}/> {this.props.title}</span>
-        <img src="./images/3.png" style={{float:'right' ,width:"60px"}} onClick={this.clickme2.bind(this)} />
+            
+        <h1 className="list-group-item list-group-item-action list-group-item-info " ><span className={decorationClass}><input type="checkbox" checked={props.complete} onChange={checkboxF1} /> {props.title}</span>
+        <img src="./images/3.png" style={{float:'right' ,width:"60px"}} onClick={daleteTodo1} />
         </h1>
         
         </div>
-    }
+    
 }
+export default Todo;

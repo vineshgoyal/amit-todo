@@ -26,3 +26,7 @@ body {
 .class3{
     margin: 10px;
 }
+.workdone{
+    text-decoration: line-through;
+    color: #aaa;
+}
