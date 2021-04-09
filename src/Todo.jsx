@@ -1,5 +1,5 @@
 import React from 'react'
-import UpdateTodov from "./UpdateTodov"
+
 
 function  Todo (props) {
 
@@ -15,7 +15,7 @@ function  Todo (props) {
         
         console.log(props)
         let decorationClass="";
-        if(props.complete==true) {
+        if(props.complete===true) {
             decorationClass="workdone"
 
         }
@@ -26,7 +26,8 @@ function  Todo (props) {
         return  <div>
             
         <h1 className="list-group-item list-group-item-action list-group-item-info " ><span className={decorationClass}><input type="checkbox" checked={props.complete} onChange={checkboxF1} /> {props.title}</span>
-        <img src="./images/3.png" style={{float:'right' ,width:"60px"}} onClick={daleteTodo1} /> <button type="button" class="btn btn-primary" onClick={editbtn}>Edit</button>
+        <img src="./images/3.png" alt="image3" style={{float:'right' ,width:"60px"}} onClick={daleteTodo1} />
+         <button type="button" className="btn btn-primary" onClick={editbtn}>Edit</button>
     
         </h1>
         

@@ -1,4 +1,3 @@
-import axios from 'axios'
 import React from 'react'
 import Todo from './Todo'
 import './todo.css'
@@ -10,39 +9,64 @@ function Todolist() {
   const [todo, setTodo] = React.useState("");
   const [tempData, tempfunc] = React.useState({})
   const [check, setCheck] = React.useState(false);
+  const [error, setError] = React.useState(null);
 
   function changeTodo(event) {
     setTodo(event.target.value)
+    setError(null)
 
 
   }
 
   function onAdd() {
+    if(error===null ){
+      setError("Please enter new todo")
+    }
+   
     let singleTodo = {
       title: todo,
       complete: false
     }
-
+    if (todo !== "") {
     HttpsReq.post("todos", singleTodo).then((res) => {
       todoList.push(res.data);
       setTodoList([...todoList]);
       setTodo("");
     })
-
+  }
   }
   console.log(todo)
+  let hasAnyCompletedTodo=( todoList )=>{
+    const newTodos = todoList.filter( (singleTodo)=>{
+      return singleTodo.complete  === true; 
+    } );
+      if(newTodos.length > 0){
+        return true;
+      }else {
+        return false;
+      }
+  }
   React.useEffect(function () {
-    HttpsReq.get("todos").then((res) => {
-      setTodoList([...res.data])
+    HttpsReq.get("/todos").then((res) => {
+      const checked = hasAnyCompletedTodo(res.data);
+    setTodoList(res.data)
+      setCheck(checked)
     })
+
   }, [])
+
+  // React.useEffect(function () {
+  //   HttpsReq.get("todos").then((res) => {
+  //     setTodoList([...res.data])
+  //   })
+  // }, [])
   let deleteTodo = (value) => {
 
     HttpsReq.delete("todos/" + value).then((res) => {
       let index = null;
       let temp = [...todoList]
       for (let i = 0; i < todoList.length; i++) {
-        if (todoList[i].id == value) {
+        if (todoList[i].id === value) {
           index = i; break;      //to get the index value we use for loop
         }
 
@@ -61,7 +85,7 @@ function Todolist() {
       let temp = [...todoList]
       let index = null;
       for (let i = 0; i < todoList.length; i++) {
-        if (todoList[i].id == todo.id) {
+        if (todoList[i].id === todo.id) {
           index = i; break
         }
 
@@ -92,7 +116,6 @@ function Todolist() {
   let ClearALLbtn = () => {
     
     let index = null;
-    let temp = [...todo]
     for (let i = 0; i < todoList.length; i++) {
       console.log(index)
 
@@ -108,14 +131,14 @@ function Todolist() {
     tempfunc({ ...todo })
   }
   let get = todoList.map((values, i) => {
-    return <Todo todo={values} complete={values.complete} index={i} complete={values.complete} id={values.id} title={values.title} onClick={deleteTodo} onClick2={checkBoxUpdate} onClick3={editNow} />
+    return <Todo todo={values} key={values.id}  index={i} complete={values.complete} id={values.id} title={values.title} onClick={deleteTodo} onClick2={checkBoxUpdate} onClick3={editNow} />
   })
   let button = "";
   let select = "";
 
   if (todoList.length > 0) {
     button = <button className="btnclass" onClick={ClearALLbtn}>Clear All</button>
-    if(check == false){
+    if(check === false){
       select = <button className="btnclass" onClick={selectAllbtn}>Select All</button>
     }else {
       select = <button className="btnclass" onClick={selectAllbtn}>Unselect All</button>
@@ -134,7 +157,7 @@ function Todolist() {
       let temp = [...todoList]
       let index =null;
       for(let i=0;i<todoList.length;i++){
-        if(todoList[i].id ==todo.id){
+        if(todoList[i].id === todo.id){
           index =i ; break
         }
       }
@@ -150,14 +173,20 @@ function Todolist() {
     tempfunc({})
     
   }
-  return <div ClassName="container">
+  let count;
+    if (todoList.length > 0) {
+      count = <p>You have {todoList.length} pending value</p>
+    }
+  return <div className="container">
     <div className="class2">
       <h1>TODO LIST</h1>
       <h3>
 
-        <input type="text" placeholder="Add your new todo" value={todo} onChange={changeTodo} />
-        <img src="./images/4.png" style={{ width: "60px" }} onClick={onAdd} />
+        <input  type="text" placeholder="Add your new todo" value={todo} onChange={changeTodo} />
+        <img src="./images/4.png" alt="image4" style={{ width: "60px" }} onClick={onAdd} />
       </h3>
+      <p className="text-danger">{error}</p>
+      {count}
       {get}
       {button}{select}
 

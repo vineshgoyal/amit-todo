@@ -1,13 +1,12 @@
-import { computeHeadingLevel } from '@testing-library/dom';
 import React from 'react'
 import { HttpsReq } from './HttpRequest/HttpsReq'
 
 
 function UpdateTodov (props){
-    const [todo1, setTodo1] = React.useState({});
+    const [todo1, setTodo1] = React.useState({title:""});
 console.log("update todo" ,props)
 React.useEffect(function(){
-    if (props.value != undefined) {
+    if (props.value !== undefined) {
     HttpsReq.get("todos/" + props.value).then((res)=>{
         setTodo1({...res.data})
     })
@@ -22,18 +21,18 @@ function changeTodo1(event){
 
   }
  
-  function onAdd1(){
-  let singleTodo={
-      title: todo1.title,
+// //   function onAdd1(){
+// //   let singleTodo={
+// //       title: todo1.title,
       
-  }
-  HttpsReq.patch('todos/' + props.value ,singleTodo).then((res)=>{
+// //   }
+// //   HttpsReq.patch('todos/' + props.value ,singleTodo).then((res)=>{
      
     
-})
+// // })
 
         
-}
+// }
 function todoValue(){
     props.onClick4(todo1)
 }
@@ -42,13 +41,15 @@ function CancleCallBack(){
     
 }
 
-   if (props.value==undefined){
+   if (props.value=== undefined){
        return null;
    }
    console.log(todo1)
-   return <div class="form-group">
-      <h5 >Name</h5>
-      <input  type="text" value={todo1.title} onChange={changeTodo1}/><button type="button" class="btn btn-success" onClick={onAdd1 ,todoValue} >update</button><button type="button" class="btn btn-info" onClick={CancleCallBack}>cancle</button>
+   return <div>
+  
+      <div className="form-group"><input className="form-control" type="text" placeholder="Update todo" value={todo1.title} onChange={changeTodo1}/>
+      <button type="button" className="btn btn-success" onClick={ todoValue} >update</button>  &nbsp;  
+      <button type="button" className="btn btn-info" onClick={CancleCallBack}>cancle</button></div>
       </div>
     
         
