@@ -5,7 +5,9 @@ import {HttpsReq} from './HttpRequest/HttpsReq'
 
 export default class UpdateTodo extends React.Component{
     state = {
-        todo:{}
+        todo:{
+            title:""
+        }
     }
 
 
@@ -27,6 +29,7 @@ export default class UpdateTodo extends React.Component{
         this.setState({
             todo:Name
         })
+        
 }
         //  this.state.todo.title = event.target.value
         //  this.setState(this.state)  
@@ -47,8 +50,12 @@ export default class UpdateTodo extends React.Component{
 
  UpdateUi1=()=>{
      
-
-    this.props.onClickHandler(this.state.todo)
+let updateTodo={...this.state.todo}
+    this.props.onClickHandler(updateTodo)
+    let Name ={...this.state.todo, title:""}
+    this.setState({
+        todo:Name
+    })
     
  }
  CancleUi=()=>{
@@ -63,10 +70,11 @@ if(this.props.todoid===undefined){
 else {
         return <div>
 
-            {this.state.todo.title}
+          
             <h3>Name</h3>
-            <input type="text" value={this.state.todo.title} onChange={this.CaptureValue}/>
-            <button onClick={this.UpdateUi1} className="btn btn-dark">update</button>
+            
+            <div className="form-group"><input className="form-control" placeholder="enter todo" type="text" value={this.state.todo.title} onChange={this.CaptureValue}/></div>
+            <button onClick={this.UpdateUi1} className="btn btn-dark">update</button> &nbsp; 
             <button className="btn btn-info"onClick={this.CancleUi}>cancle</button>
         </div>
     }

@@ -12,25 +12,33 @@ export default class TodoList extends React.Component {
    
     temptitle: "",
     edittitle:"",
-   check:false
+    
+    check:false,
+    error:null
   }
 
-  componentDidMount(){
-   
-    this.setState({
-      check:false
-    })
+  hasAnyCompletedTodo( todoList ){
+    const newTodos = todoList.filter( (singleTodo)=>{
+      return singleTodo.complete  === true; 
+    } );
+      if(newTodos.length > 0){
+        return true;
+      }else {
+        return false;
+      }
   }
   componentDidMount() {
     HttpsReq.get("/todos").then((res) => {
-      
+      const checked = this.hasAnyCompletedTodo(res.data);
       this.setState(
         {
-          todos:res.data
+          todos:res.data,
+          check: checked
         })
     })
 
   }
+
   getList() {
     return this.state.todos.map((values, i) => {
       return <Todo todo={values} complete={values.complete} key={i}   id={values.id} title={values.title} onClick={this.ClickMe.bind(this)} onClick2={this.ClickMe2} onClick6={this.editNow.bind(this)}/>
@@ -73,24 +81,35 @@ export default class TodoList extends React.Component {
     
   }
   ClickMe2=(todo ,event)=>{
+    
     console.log(event.target.checked)
    let checked=event.target.checked
    HttpsReq.patch("todos/" + todo.id , {complete : checked}).then((res)=>{
      console.log(todo.id)
-    //let todoList=[...this.state.todos];
+    let todoList=[...this.state.todos];
     let index =null;
     for(let i=0;i<this.state.todos.length;i++){
      if(this.state.todos[i].id===todo.id){
       index =i;
       console.log(index)
-      this.state.todos[index].complete=checked
-      this.setState(this.state)
+      todoList[index].complete=checked
+      this.setState({
+        ...this.state,
+        todoList
+      });
+      break;
     }
     
    }
    })
+   
   }
   updatebtn() {
+    if(this.state.error===null){
+      this.setState({
+        error:"Please enter new todo"
+      })
+    }
 
     let newtodo = {
       title: this.state.temptitle,
@@ -114,8 +133,6 @@ export default class TodoList extends React.Component {
 
   }
 editNow(todoedit){
-      //this is not working showing this.state.edittitle.title undefined in updatetodo component
- //this.state.edittitle=
   this.setState({
     ...this.state.todos,
     edittitle:{...todoedit}
@@ -175,15 +192,21 @@ if(todo.id!==undefined){
   selectAllbtn(){
     let temp =[...this.state.todos]
     console.log(this.state.check)
+    
     for(let i=0;i<this.state.todos.length;i++){
+      
       HttpsReq.patch("todos/" + this.state.todos[i].id , {complete:!this.state.check})
       temp[i].complete=!this.state.check
-     
-      
+    
+    
     }
-    this.state.check=!this.state.check
-    this.state.todos= temp
-    this.setState(this.state)
+      
+    let checked=!this.state.check
+    // this.state.todos= temp
+    this.setState({
+      check:checked,
+      todos:temp
+    })
 
   }
 
@@ -202,11 +225,11 @@ if(todo.id!==undefined){
        let button;
        let select;
        if(this.state.temptitle.length!==undefined){
-         button =<button className="btnclass" onClick={this.clearAllBtn.bind(this)}>Clear All</button>
-         if(this.state.check == false){
-          select = <button className="btnclass" onClick={this.selectAllbtn.bind(this)}>Select All</button>
+         button =<button className="btn btn-warning" onClick={this.clearAllBtn.bind(this)}>Clear All</button>
+         if(this.state.check === false ){
+          select = <button className="btn btn-primary" onClick={this.selectAllbtn.bind(this)}>Select All</button>
         }else {
-          select = <button className="btnclass" onClick={this.selectAllbtn.bind(this)}>Unselect All</button>
+          select = <button className="btn btn-primary" onClick={this.selectAllbtn.bind(this)}>Unselect All</button>
     
         }
        }
@@ -218,8 +241,9 @@ if(todo.id!==undefined){
     return <div className=" class2">
       <div className="class3">
       <h1>TODO APP</h1>
-
+      
       {this.Userdetails()}
+      <p class="text-danger">{this.state.error}</p>
       {count}
       <div className="list">
 
@@ -227,7 +251,7 @@ if(todo.id!==undefined){
         
       </div>
       <div >{button} {select}</div>
-      <UpdateTodo  todoid= {this.state.edittitle.id} onClickHandler={this.updateUi} onClickCancle={this.Canclebutton} />
+     <div> <UpdateTodo  todoid= {this.state.edittitle.id} onClickHandler={this.updateUi} onClickCancle={this.Canclebutton} /></div>
       </div>
     </div>
 
