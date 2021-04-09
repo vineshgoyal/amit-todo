@@ -1,10 +1,12 @@
 import React from 'react'
 
+
 function  Todo (props) {
+
 
         let daleteTodo1=()=>{
             props.onClick(props.id)
-            console.log(props)
+            console.log("delete" ,props)
         }
         let checkboxF1=(event)=>{
             props.onClick2(props.todo ,event.target.checked)
@@ -13,15 +15,20 @@ function  Todo (props) {
         
         console.log(props)
         let decorationClass="";
-        if(props.complete==true) {
+        if(props.complete===true) {
             decorationClass="workdone"
 
         }
+    let editbtn=()=>{
+        props.onClick3(props.id ,props.todo)
+    }
         
         return  <div>
             
         <h1 className="list-group-item list-group-item-action list-group-item-info " ><span className={decorationClass}><input type="checkbox" checked={props.complete} onChange={checkboxF1} /> {props.title}</span>
-        <img src="./images/3.png" style={{float:'right' ,width:"60px"}} onClick={daleteTodo1} />
+        <img src="./images/3.png" alt="image3" style={{float:'right' ,width:"60px"}} onClick={daleteTodo1} />
+         <button type="button" className="btn btn-primary" onClick={editbtn}>Edit</button>
+    
         </h1>
         
         </div>
