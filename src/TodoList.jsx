@@ -13,27 +13,28 @@ function Todolist() {
 
   function changeTodo(event) {
     setTodo(event.target.value)
-    setError(null)
 
 
   }
 
   function onAdd() {
-    if(error===null ){
+    if(todo === "" ){
       setError("Please enter new todo")
+      return;
     }
    
     let singleTodo = {
       title: todo,
       complete: false
     }
-    if (todo !== "") {
+    
     HttpsReq.post("todos", singleTodo).then((res) => {
       todoList.push(res.data);
       setTodoList([...todoList]);
       setTodo("");
+      setError("")
     })
-  }
+  
   }
   console.log(todo)
   let hasAnyCompletedTodo=( todoList )=>{
